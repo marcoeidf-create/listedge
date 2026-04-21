@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — ListEdge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --gray-100: #f5f5f3;
+    --gray-200: #e8e8e4;
+    --gray-400: #a0a09a;
+    --gray-600: #6b6b63;
+    --ink: #111110;
+    --green: #16a34a;
+    --red: #dc2626;
+  }
+
+  body {
+    background: var(--gray-100);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 48px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gray-400); }
+
+  .nav-back {
+    font-size: 13px;
+    color: var(--gray-600);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--ink); }
+
+  /* ── LAYOUT ── */
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .page { grid-template-columns: 1fr; }
+    nav { padding: 0 20px; }
+  }
+
+  /* ── ORDER SUMMARY (left) ── */
+  .summary {
+    position: sticky;
+    top: 32px;
+  }
+
+  .summary-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 20px;
+  }
+
+  .summary-plan {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+
+  .summary-price {
+    font-size: 36px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    margin-bottom: 6px;
+  }
+
+  .summary-contacts {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 32px;
+  }
+
+  .summary-divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin-bottom: 28px;
+  }
+
+  .summary-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .summary-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+
+  .feat-check {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    stroke: var(--green);
+  }
+
+  .guarantee-box {
+    margin-top: 32px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.55;
+  }
+
+  .guarantee-box strong {
+    display: block;
+    color: var(--ink);
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* ── CHECKOUT FORM (right) ── */
+  .checkout-box {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 36px 32px;
+  }
+
+  @media (max-width: 480px) {
+    .checkout-box { padding: 24px 18px; }
+  }
+
+  .checkout-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-bottom: 28px;
+  }
+
+  .section-divider {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin: 24px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-600);
+    letter-spacing: 0.01em;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(17,17,16,0.06);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* ── STRIPE CARD ── */
+  .stripe-wrap {
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+
+  .stripe-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  #card-element {
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 11px 13px;
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #card-element.StripeElement--focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(17,17,16,0.06);
+  }
+
+  #card-error {
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 8px;
+    min-height: 18px;
+  }
+
+  /* ── PAY BUTTON ── */
+  .pay-btn {
+    width: 100%;
+    background: var(--ink);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 15px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .pay-btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+  .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .pay-footnote {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  /* ── SUCCESS STATE ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .success-screen.show { display: block; }
+  .checkout-form.hide { display: none; }
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #f0fdf4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .success-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .success-body {
+    font-size: 15px;
+    color: var(--gray-600);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .back-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--gray-600);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .back-btn:hover { border-color: var(--gray-400); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">List<span>Edge</span></a>
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 7H2M6 3L2 7l4 4"/>
+    </svg>
+    Back
+  </a>
+</nav>
+
+<div class="page">
+
+  <!-- LEFT: ORDER SUMMARY -->
+  <div class="summary">
+    <div class="summary-label">Your order</div>
+    <div class="summary-plan" id="sumPlan">Starter</div>
+    <div class="summary-price" id="sumPrice">$297</div>
+    <div class="summary-contacts" id="sumContacts">100 verified contacts</div>
+    <div class="summary-divider"></div>
+    <ul class="summary-features" id="sumFeatures"></ul>
+    <div class="guarantee-box">
+      <strong>Per-contact guarantee</strong>
+      If a contact bounces, we replace it. If we can't find a replacement, we refund the value of that contact. No questions asked.
+    </div>
+  </div>
+
+  <!-- RIGHT: FORM + PAYMENT -->
+  <div class="checkout-box">
+
+    <div class="checkout-form" id="checkoutForm">
+      <div class="checkout-title">Complete your order</div>
+
+      <!-- STARTER FIELDS -->
+      <div id="starterFields" style="display:none">
+        <div class="section-divider">Your info</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input class="form-input" id="s_fname" type="text" placeholder="Alex">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input class="form-input" id="s_lname" type="text" placeholder="Rivera">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="s_email" type="email" placeholder="alex@company.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company website</label>
+          <input class="form-input" id="s_website" type="url" placeholder="https://yourcompany.com">
+        </div>
+        <div class="section-divider">Target</div>
+        <div class="form-group">
+          <label class="form-label">Target industry</label>
+          <input class="form-input" id="s_industry" type="text" placeholder="e.g. SaaS, Healthcare, Logistics">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target job titles</label>
+          <input class="form-input" id="s_titles" type="text" placeholder="e.g. VP of Sales, Head of Growth, CTO">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Geography</label>
+          <input class="form-input" id="s_geo" type="text" placeholder="e.g. US, UK, Global">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company size</label>
+          <select class="form-select" id="s_size">
+            <option value="">Any</option>
+            <option>1–10</option>
+            <option>11–50</option>
+            <option>51–200</option>
+            <option>201–500</option>
+            <option>500+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Anything else? (signals, tech stack…)</label>
+          <textarea class="form-textarea" id="s_notes" placeholder="e.g. Must use HubSpot, Series A+ funded…"></textarea>
+        </div>
+      </div>
+
+      <!-- GROWTH FIELDS -->
+      <div id="growthFields" style="display:none">
+        <div class="section-divider">Your info</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input class="form-input" id="g_fname" type="text" placeholder="Alex">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input class="form-input" id="g_lname" type="text" placeholder="Rivera">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="g_email" type="email" placeholder="alex@company.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company website</label>
+          <input class="form-input" id="g_website" type="url" placeholder="https://yourcompany.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your job title</label>
+          <input class="form-input" id="g_title" type="text" placeholder="e.g. Head of Sales">
+        </div>
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="section-divider">Payment</div>
+      <div class="stripe-wrap">
+        <label class="stripe-label">Card details</label>
+        <div id="card-element"></div>
+        <div id="card-error"></div>
+      </div>
+
+      <button class="pay-btn" id="payBtn" onclick="submitOrder()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span id="payBtnText">Pay $297</span>
+      </button>
+      <div class="pay-footnote">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secured by Stripe
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="success-title">Order received.</div>
+      <div class="success-body">We'll be in touch shortly.</div>
+      <a href="index.html" class="back-btn">← Back to ListEdge</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── READ PLAN FROM URL
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get('plan') === 'growth' ? 'growth' : 'starter';
+
+  const plans = {
+    starter: {
+      name: 'Starter',
+      price: '$297',
+      amount: 29700,
+      contacts: '100 verified contacts',
+      features: [
+        '100 verified contacts',
+        'Email + LinkedIn + context',
+        'Delivered within 5 business days',
+        'Clean CSV export',
+        'Per-contact bounce guarantee'
+      ]
+    },
+    growth: {
+      name: 'Growth',
+      price: '$897',
+      amount: 89700,
+      contacts: '500 verified contacts',
+      features: [
+        '500 verified contacts',
+        'Email + LinkedIn + buying signal',
+        'Delivered within 5 business days',
+        'CRM-ready export (HubSpot, SF)',
+        'Dedicated account manager',
+        'Per-contact bounce guarantee'
+      ]
+    }
+  };
+
+  const p = plans[plan];
+
+  // Populate summary
+  document.getElementById('sumPlan').textContent = p.name;
+  document.getElementById('sumPrice').textContent = p.price;
+  document.getElementById('sumContacts').textContent = p.contacts;
+  document.getElementById('payBtnText').textContent = 'Pay ' + p.price;
+  document.title = 'Checkout — ListEdge ' + p.name;
+
+  const featList = document.getElementById('sumFeatures');
+  p.features.forEach(f => {
+    const li = document.createElement('li');
+    li.innerHTML = `<svg class="feat-check" viewBox="0 0 16 16" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="7"/><polyline points="5,8 7,10 11,6"/></svg>${f}`;
+    featList.appendChild(li);
+  });
+
+  // Show correct form fields
+  document.getElementById(plan === 'starter' ? 'starterFields' : 'growthFields').style.display = 'block';
+
+  // ── STRIPE
+  const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY');
+  const elements = stripe.elements();
+  const cardElement = elements.create('card', {
+    style: {
+      base: {
+        fontFamily: "'DM Sans', sans-serif",
+        fontSize: '14px',
+        color: '#111110',
+        '::placeholder': { color: '#a0a09a' }
+      }
+    }
+  });
+  cardElement.mount('#card-element');
+
+  // ── SUBMIT
+  async function submitOrder() {
+    const starterRequired = ['s_fname','s_lname','s_email','s_website','s_industry','s_titles'];
+    const growthRequired  = ['g_fname','g_lname','g_email','g_website','g_title'];
+    const required = plan === 'starter' ? starterRequired : growthRequired;
+
+    for (const id of required) {
+      const el = document.getElementById(id);
+      if (el && !el.value.trim()) { el.focus(); return; }
+    }
+
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true;
+    document.getElementById('payBtnText').textContent = 'Processing…';
+
+    const email = plan === 'starter'
+      ? document.getElementById('s_email').value
+      : document.getElementById('g_email').value;
+
+    try {
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: { email }
+      });
+
+      if (error) {
+        document.getElementById('card-error').textContent = error.message;
+        btn.disabled = false;
+        document.getElementById('payBtnText').textContent = 'Pay ' + p.price;
+        return;
+      }
+
+      const res = await fetch('/api/charge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentMethodId: paymentMethod.id,
+          amount: p.amount,
+          email,
+          plan
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        document.getElementById('card-error').textContent = data.error;
+        btn.disabled = false;
+        document.getElementById('payBtnText').textContent = 'Pay ' + p.price;
+        return;
+      }
+
+      document.getElementById('checkoutForm').classList.add('hide');
+      document.getElementById('successScreen').classList.add('show');
+
+    } catch(e) {
+      document.getElementById('card-error').textContent = 'Something went wrong. Please try again.';
+      btn.disabled = false;
+      document.getElementById('payBtnText').textContent = 'Pay ' + p.price;
+    }
+  }
+</script>
+
+</body>
+</html>
