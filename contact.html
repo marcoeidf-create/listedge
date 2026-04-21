@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — ListEdge</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --surface: #f8f8f6;
+    --border: #e2e2dc;
+    --border-strong: #c8c8c0;
+    --muted: #8a8a82;
+    --body: #444440;
+    --ink: #0f0f0e;
+    --accent: #16a34a;
+    --accent-dim: rgba(22,163,74,0.08);
+    --nav-h: 64px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .nav-logo span { color: var(--muted); }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 13.5px;
+    color: var(--body);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink) !important;
+    color: var(--white) !important;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    transition: opacity 0.15s !important;
+  }
+  .nav-cta:hover { opacity: 0.82 !important; }
+
+  .nav-burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .nav-burger span {
+    display: block;
+    width: 22px; height: 1.5px;
+    background: var(--ink);
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-burger.open span:nth-child(2) { opacity: 0; }
+  .nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .nav-mobile {
+    display: none;
+    position: fixed;
+    top: var(--nav-h);
+    left: 0; right: 0;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 24px 28px;
+    z-index: 199;
+    flex-direction: column;
+    gap: 0;
+  }
+  .nav-mobile.open { display: flex; }
+  .nav-mobile a {
+    display: block;
+    padding: 11px 0;
+    font-size: 15px;
+    color: var(--body);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+  .nav-mobile a:last-child { border-bottom: none; margin-top: 16px; }
+  .nav-mobile .nav-cta {
+    display: inline-block;
+    border-bottom: none;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 6px;
+  }
+
+  /* ─── PAGE ─── */
+  .page-wrap { padding-top: var(--nav-h); }
+
+  /* ─── HERO ─── */
+  .contact-hero {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .contact-hero-inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 72px 40px 72px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .contact-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .contact-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px; height: 1px;
+    background: var(--border-strong);
+  }
+  .contact-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+    color: var(--ink);
+    margin-bottom: 22px;
+  }
+  .contact-hero .lead {
+    font-size: 15.5px;
+    color: var(--body);
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+    max-width: 480px;
+    margin-bottom: 28px;
+  }
+  .contact-hero .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    padding-bottom: 3px;
+    border-bottom: 1px solid var(--border-strong);
+    transition: border-color 0.15s, gap 0.15s;
+  }
+  .contact-hero .hero-cta:hover {
+    border-color: var(--ink);
+    gap: 12px;
+  }
+  .contact-hero .hero-cta svg { transition: transform 0.15s; }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .info-row {
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+  }
+  .info-row:last-child { border-bottom: 1px solid var(--border); }
+  .info-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .info-value {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  a.info-value:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-strong); }
+
+  /* ─── FORM ─── */
+  .form-section {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+  .form-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .form-intro {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .form-intro h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .form-intro p {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: var(--muted);
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: none;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(15,15,14,0.06);
+  }
+  .contact-form textarea {
+    min-height: 140px;
+    resize: vertical;
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+  }
+  .contact-form button {
+    margin-top: 6px;
+    background: var(--ink);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 22px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .contact-form button:hover { opacity: 0.88; }
+  .contact-form button:active { transform: translateY(1px); }
+  .form-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+    margin-top: 18px;
+  }
+
+  /* ─── CTA CARD ─── */
+  .cta-section {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 20px 40px 110px;
+  }
+  .cta-card {
+    background: var(--ink);
+    color: var(--white);
+    border-radius: 16px;
+    padding: 80px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  }
+  .cta-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(30px, 4.2vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 6px;
+  }
+  .cta-card h2 .dim { color: rgba(255,255,255,0.45); display: block; }
+  .cta-card p {
+    max-width: 520px;
+    margin: 22px auto 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: -0.01em;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+  }
+  .footer-inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 64px 40px 36px;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr 140px 140px;
+    gap: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 32px;
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .footer-logo span { color: rgba(255,255,255,0.35); }
+  .footer-brand p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    max-width: 240px;
+    letter-spacing: -0.01em;
+  }
+  .footer-col h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 16px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.15s;
+  }
+  .footer-col ul a:hover { color: var(--white); }
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-copy { font-size: 12px; }
+  .footer-social { display: flex; gap: 10px; }
+  .footer-social a {
+    width: 30px; height: 30px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .footer-social a:hover { border-color: rgba(255,255,255,0.4); color: var(--white); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .contact-hero-inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      padding: 56px 24px 56px;
+    }
+    .form-section { padding: 56px 24px; }
+    .cta-section { padding: 8px 24px 80px; }
+    .cta-card { padding: 56px 28px; border-radius: 14px; }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .nav-burger { display: flex; }
+    .footer-top { grid-template-columns: 1fr; gap: 36px; }
+    .footer-inner { padding: 48px 24px 28px; }
+    .footer-copy { font-size: 11.5px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">List<span>Edge</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#how">How it works</a></li>
+    <li><a href="index.html#lists">Lists</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book a Call</a></li>
+  </ul>
+  <button class="nav-burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-mobile" id="mobileNav">
+  <a href="index.html#how">How it works</a>
+  <a href="index.html#lists">Lists</a>
+  <a href="index.html#pricing">Pricing</a>
+  <a href="index.html#faq">FAQ</a>
+  <a href="book.html" class="nav-cta">Book a Call</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <section class="contact-hero">
+    <div class="contact-hero-inner">
+      <div class="hero-left">
+        <div class="contact-eyebrow">Contact Us</div>
+        <h1>Get in Touch</h1>
+        <p class="lead">Whether you're scoping your first list or scaling an outbound engine, we'll help you reach the right buyers with data that actually converts.</p>
+        <a href="book.html" class="hero-cta">
+          Book a strategy call
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <div class="contact-info">
+        <div class="info-row">
+          <div class="info-label">Email</div>
+          <a href="mailto:support@listedge.co" class="info-value">support@listedge.co</a>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Response Time</div>
+          <div class="info-value">Within 1 business day</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Location</div>
+          <div class="info-value">United States</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section class="form-section">
+    <div class="form-inner">
+      <div class="form-intro">
+        <h2>Send us a message</h2>
+        <p>Tell us about your target market and we'll get back to you.</p>
+      </div>
+      <form class="contact-form" id="contactForm" novalidate>
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="company" placeholder="Company (optional)">
+        <textarea name="message" placeholder="What's on your mind?" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+      <p class="form-note">We only use your info to reply. We don't add it to any list.</p>
+    </div>
+  </section>
+
+  <!-- CTA CARD (no buttons) -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <h2>
+        <span class="dim">Ready to close more deals?</span>
+        Your next customer is already on a list.
+      </h2>
+      <p>Stop waiting for inbound. The pipeline you need exists — you just need the right data to reach it.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">List<span>Edge</span></a>
+        <p>Ultra-targeted B2B contact lists built for your exact market. Every record verified. Every signal fresh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html#how">How it works</a></li>
+          <li><a href="index.html#lists">Lists</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+          <li><a href="index.html#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Use</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 ListEdge. All rights reserved.</span>
+      <div class="footer-social">
+        <a href="#" aria-label="LinkedIn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="#" aria-label="X / Twitter">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const burger = document.getElementById('burger');
+  const mobileNav = document.getElementById('mobileNav');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      burger.classList.remove('open');
+      mobileNav.classList.remove('open');
+    });
+  });
+
+  // Form submission → /api/contact (Resend)
+  const form = document.getElementById('contactForm');
+  const btn = form.querySelector('button');
+  const originalText = btn.textContent;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || 'Something went wrong.');
+      }
+
+      btn.textContent = 'Thanks — we\u2019ll be in touch';
+      form.reset();
+      setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 3500);
+    } catch (err) {
+      btn.textContent = 'Failed — try again';
+      btn.style.background = '#b91c1c';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    }
+  });
+</script>
+</body>
+</html>
