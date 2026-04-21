@@ -565,7 +565,7 @@
   document.getElementById(plan === 'starter' ? 'starterFields' : 'growthFields').style.display = 'block';
 
   // ── STRIPE
-  const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY');
+  const stripe = Stripe('pk_live_51TOSjQDO1bIxt0dtgsJ6DRo6BRKrcrCtLMY65rYFYjW7HebDwrOwLU4TtURMdlP88BJ4RUX6RIH14GcVwYJnnBS500CiRmOr1w');
   const elements = stripe.elements();
   const cardElement = elements.create('card', {
     style: {
