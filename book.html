@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Strategy Call — ListEdge</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --black: #0a0a0a;
+    --gray-100: #f5f5f3;
+    --gray-200: #e8e8e4;
+    --gray-400: #a0a09a;
+    --gray-600: #6b6b63;
+    --gray-800: #2a2a26;
+    --ink: #111110;
+    --green: #16a34a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--gray-400); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gray-600);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--white) !important;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em;
+    transition: opacity 0.2s !important;
+  }
+
+  .nav-cta:hover { opacity: 0.8; color: var(--white) !important; }
+
+  /* ── PAGE ── */
+  .page-wrap {
+    padding-top: 64px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .book-hero {
+    padding: 80px 48px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .book-hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(0,0,0,0.035) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .book-hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.035) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, black 20%, transparent 75%);
+    pointer-events: none;
+  }
+
+  .book-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-600);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .book-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .book-headline .gray { color: var(--gray-400); font-weight: 500; }
+
+  .book-sub {
+    font-size: 17px;
+    color: var(--gray-600);
+    max-width: 440px;
+    margin: 0 auto 56px;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+    position: relative;
+  }
+
+  /* ── CAL CONTAINER ── */
+  .cal-wrap {
+    padding: 0 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .cal-card {
+    border: 1px solid var(--gray-200);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: 0 4px 40px rgba(0,0,0,0.06);
+  }
+
+  #my-cal-inline-45 {
+    width: 100%;
+    min-height: 700px;
+  }
+
+  /* ── TRUST BAR ── */
+  .trust-bar {
+    padding: 40px 48px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--gray-200);
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .trust-item svg { flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--gray-100);
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 72px 48px 40px;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 80px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .footer-brand p {
+    font-size: 14px;
+    color: var(--gray-600);
+    line-height: 1.65;
+    max-width: 260px;
+    margin-top: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .footer-logo span { color: var(--gray-400); }
+
+  .footer-col h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 20px;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-col ul a {
+    font-size: 14px;
+    color: var(--gray-600);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+
+  .footer-col ul a:hover { color: var(--ink); }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 32px;
+  }
+
+  .footer-copy {
+    font-size: 12px;
+    color: var(--gray-400);
+    letter-spacing: 0.01em;
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .footer-social a {
+    width: 32px; height: 32px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .footer-social a:hover { border-color: var(--gray-400); color: var(--ink); }
+
+  /* ── DARK CTA ── */
+  .dark-cta-wrap {
+    padding: 0 48px 80px;
+    max-width: 1296px;
+    margin: 0 auto;
+  }
+
+  .dark-cta {
+    background: var(--ink);
+    border-radius: 20px;
+    padding: 80px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dark-cta-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .dark-cta h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+  }
+
+  .dark-cta p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 768px) {
+    .footer-top { grid-template-columns: 1fr; gap: 40px; }
+    .footer-inner { padding: 48px 20px 32px; }
+    .dark-cta-wrap { padding: 0 20px 60px; }
+    .dark-cta { padding: 56px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">List<span>Edge</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#how">How it works</a></li>
+    <li><a href="index.html#lists">Lists</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+    <li><a href="index.html#faq">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book a Call</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="book-hero">
+    <div class="book-hero-bg"></div>
+    <div class="book-hero-grid"></div>
+
+    <div class="book-badge">
+      <span class="badge-dot"></span>
+      45-min strategy call · Free
+    </div>
+
+    <h1 class="book-headline">
+      <span style="color:var(--gray-400); font-weight:500; display:block">Find your next</span>
+      <span style="display:block">best customers.</span>
+    </h1>
+
+    <p class="book-sub">
+      We'll scope your ideal list, match it to a verified segment, and get you to market — fast. No fluff, just pipeline.
+    </p>
+  </div>
+
+  <!-- CAL.COM EMBED -->
+  <div class="cal-wrap">
+    <div class="cal-card">
+      <div style="width:100%;height:700px;overflow:scroll" id="my-cal-inline-45"></div>
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 4L6.5 10.5 3 7"/>
+      </svg>
+      No commitment required
+    </div>
+    <div class="trust-item">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 4L6.5 10.5 3 7"/>
+      </svg>
+      We scope your exact target market
+    </div>
+    <div class="trust-item">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 4L6.5 10.5 3 7"/>
+      </svg>
+      95%+ verified deliverability, guaranteed
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DARK CTA -->
+<div class="dark-cta-wrap">
+  <div class="dark-cta">
+    <span class="dark-cta-label">Ready to close more deals?</span>
+    <h2>
+      <span style="color:rgba(255,255,255,0.35); font-weight:500; display:block">Your next customer</span>
+      <span style="color:#fff; display:block">is already on a list.</span>
+    </h2>
+    <p>Stop waiting for inbound. The pipeline you need exists — you just need the right data to reach it.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo">List<span>Edge</span></a>
+        <p>Ultra-targeted B2B contact lists built for your exact market. Every record verified. Every signal fresh.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html#how">How it works</a></li>
+          <li><a href="index.html#lists">Lists</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+          <li><a href="index.html#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Use</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 ListEdge. All rights reserved.</span>
+      <div class="footer-social">
+        <a href="#" aria-label="LinkedIn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="#" aria-label="X">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cal.com embed -->
+<script type="text/javascript">
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", "45", {origin:"https://app.cal.com"});
+  Cal.ns["45"]("inline", {
+    elementOrSelector:"#my-cal-inline-45",
+    config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true","theme":"auto"},
+    calLink: "list-edge/45",
+  });
+  Cal.ns["45"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+</script>
+
+</body>
+</html>
